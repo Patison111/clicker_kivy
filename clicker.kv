@@ -1,0 +1,91 @@
+#:import from_hex kivy.utils.get_color_from_hex
+#:import colormap kivy.utils.colormap
+
+#:set main_color "#d1d1d1"
+#:set main_color_dark "#350657"
+#:set bg_color "#ff00ff"
+
+<CustomButton@Button>:
+    font_size: "20sp"
+    background_color: from_hex(main_color)
+    on_press:
+        self.background_color = from_hex(main_color_dark)
+    on_release:
+        self.background_color = from_hex(main_color)
+
+<Menu>:
+    BoxLayout:
+        orientation: "vertical"
+        padding: "20dp"
+        spacing: "20dp"
+
+        canvas.before:
+            Color:
+                rgba: from_hex(bg_color)
+
+            Rectangle:
+                pos: self.pos
+                size: self.size
+
+        Label:
+            text: "MENU"
+            font_size: "40sp"
+            size_hint: 1, 0.2
+
+        CustomButton:
+            text: "PLAY"
+            on_press: root.go_game()
+
+        CustomButton:
+            text: "SETTINGS"
+            on_press: root.go_settings()
+
+        CustomButton:
+            text: "EXIT"
+            on_press: root.go_exit()
+
+<Game>:
+    FloatLayout:
+
+        BoxLayout:
+            orientation: "vertical"
+            padding: "20dp"
+            spacing: "20dp"
+            size_hint: 1, 1
+            pos: 0, 0
+
+            canvas.before:
+                Color:
+                    rgba: from_hex(bg_color)
+
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
+            Label:
+                text: "Очки: " + str(root.score) + "   Клики: " + str(app.click_currency)
+                font_size: "22sp"
+                size_hint: 1, 0.15
+
+            Label:
+                id: buff_label
+                text: ""
+                font_size: "18sp"
+                color: 1, 0.8, 0, 1
+                size_hint: 1, 0.1
+
+            Block:
+                id: block
+
+            CustomButton:
+                text: "MENU"
+                on_press: root.go_menu()
+
+        CustomButton:
+            text: "МАГАЗИН"
+            size_hint: None, None
+            size: "130dp", "50dp"
+            pos_hint: {"right": 0.98, "top": 0.98}
+            on_press: root.open_shop()
+
+<Settings>:
