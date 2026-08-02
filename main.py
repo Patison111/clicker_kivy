@@ -228,7 +228,10 @@ class Block(Image):
                 self.block_index = 0
                 self.new_block()
             else:
-                print("GAME COMPLETED")
+                print("GAME COMPLETED — RESTARTING FROM LEVEL 1")
+                app.LEVEL = 0
+                self.block_index = 0
+                self.new_block()
         else:
             self.new_block()
 
@@ -264,7 +267,7 @@ class MediumApp(App):
     potion_4x_price = NumericProperty(100)
     potion_8x_price = NumericProperty(200)
 
- 
+    # === Все типы блоков ===
     BLOCKS = {
         "dirt": {"source": "assets/dirt.png", "hp": 10},
         "sand": {"source": "assets/sand.png", "hp": 15},
@@ -290,6 +293,9 @@ class MediumApp(App):
         "corrupted": {"source": "assets/corrupted.png", "hp": 1050},
     }
 
+    # === Прогрессия уровней ===
+    # Каждый новый тип блока сначала подмешивается к предыдущему,
+    # затем идёт уровень из двух новых + один новый, и т.д.
     LEVELS = [
         ["dirt", "dirt", "wood"],
         ["dirt", "wood", "wood"],
@@ -346,17 +352,18 @@ class MediumApp(App):
         return sm
 
     def on_start(self):
-
+        # self.root уже существует и виден на экране — самое подходящее
+        # место для загрузки сохранения (внутри build() self.root ещё None)
         self.load_progress()
 
     def on_stop(self):
-
+        # вызывается при штатном закрытии окна (например, крестик на ПК)
         self.save_progress()
 
     def on_pause(self):
-
+        # вызывается на Android при сворачивании приложения
         self.save_progress()
-        return True 
+        return True  # разрешаем приложению уйти в паузу, а не закрыться
 
     def save_progress(self, *args):
         game_screen = self.root.get_screen("g")
