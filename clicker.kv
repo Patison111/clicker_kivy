@@ -80,7 +80,7 @@
             size_hint: 1, 0.15
 
         Label:
-            text: "БЛОКОКЛИКЕР"
+            text: "BLOCK CLICKER"
             font_size: "36sp"
             bold: True
             color: from_hex(accent_color)
@@ -90,17 +90,17 @@
             size_hint: 1, 0.1
 
         CustomButton:
-            text: "ИГРАТЬ"
+            text: "PLAY"
             size_hint: 1, 0.15
             on_press: root.go_game()
 
         CustomButton:
-            text: "НАСТРОЙКИ"
+            text: "SETTINGS"
             size_hint: 1, 0.15
             on_press: root.go_settings()
 
         DangerButton:
-            text: "ВЫХОД"
+            text: "EXIT"
             size_hint: 1, 0.15
             on_press: root.go_exit()
 
@@ -137,13 +137,13 @@
                 padding: "16dp", "8dp"
 
                 Label:
-                    text: "Очки: " + str(root.score)
+                    text: "Score: " + str(root.score)
                     font_size: "18sp"
                     bold: True
                     color: from_hex(text_color)
 
                 Label:
-                    text: "Клики: " + str(app.click_currency)
+                    text: "Clicks: " + str(app.click_currency)
                     font_size: "18sp"
                     bold: True
                     color: from_hex(accent_color)
@@ -160,12 +160,12 @@
                 id: block
 
             CustomButton:
-                text: "МЕНЮ"
+                text: "MENU"
                 size_hint: 1, 0.12
                 on_press: root.go_menu()
 
         CustomButton:
-            text: "МАГАЗИН"
+            text: "SHOP"
             size_hint: None, None
             size: "64dp", "64dp"
             pos_hint: {"right": 0.95, "top": 0.97}
@@ -196,14 +196,14 @@
             size_hint: 1, 0.2
 
         Label:
-            text: "НАСТРОЙКИ"
+            text: "SETTINGS"
             font_size: "30sp"
             bold: True
             color: from_hex(accent_color)
             size_hint: 1, 0.2
 
         Label:
-            text: "Пока здесь пусто —\nраздел в разработке"
+            text: "Nothing here yet —\nthis section is under construction"
             font_size: "16sp"
             color: from_hex(muted_color)
             halign: "center"
@@ -213,9 +213,9 @@
             size_hint: 1, 0.15
 
         CustomButton:
-            text: "НАЗАД"
+            text: "BACK"
             size_hint: 1, 0.15
             on_press: root.go_menu()
 
         Widget:
-            size_hint: 1, 0.
+            size_hint: 1, 0.2
