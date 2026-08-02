@@ -55,45 +55,45 @@ class Game(Screen):
         content = BoxLayout(orientation="vertical", spacing=10, padding=15)
 
         self.shop_label = Label(
-            text=f"Клики: {app.click_currency}\nПостоянный множитель: x{app.click_multiplier}",
+            text=f"Clicks: {app.click_currency}\nPermanent multiplier: x{app.click_multiplier}",
             font_size="18sp",
             size_hint=(1, 0.3)
         )
         content.add_widget(self.shop_label)
 
         self.buy_btn = Button(
-            text=f"2x КЛИК (навсегда) — {app.double_click_price} кликов",
+            text=f"2x CLICK (permanent) — {app.double_click_price} clicks",
             font_size="14sp"
         )
         self.buy_btn.bind(on_release=self.buy_double_click)
         content.add_widget(self.buy_btn)
 
         self.potion_2x_btn = Button(
-            text=f"Зелье 2x на 60 сек — {app.potion_2x_price} кликов",
+            text=f"2x Potion for 60 sec — {app.potion_2x_price} clicks",
             font_size="14sp"
         )
         self.potion_2x_btn.bind(on_release=lambda *a: self.buy_potion(2, 60, "potion_2x_price"))
         content.add_widget(self.potion_2x_btn)
 
         self.potion_4x_btn = Button(
-            text=f"Зелье 4x на 30 сек — {app.potion_4x_price} кликов",
+            text=f"4x Potion for 30 sec — {app.potion_4x_price} clicks",
             font_size="14sp"
         )
         self.potion_4x_btn.bind(on_release=lambda *a: self.buy_potion(4, 30, "potion_4x_price"))
         content.add_widget(self.potion_4x_btn)
 
         self.potion_8x_btn = Button(
-            text=f"Зелье 8x на 15 сек — {app.potion_8x_price} кликов",
+            text=f"8x Potion for 15 sec — {app.potion_8x_price} clicks",
             font_size="14sp"
         )
         self.potion_8x_btn.bind(on_release=lambda *a: self.buy_potion(8, 15, "potion_8x_price"))
         content.add_widget(self.potion_8x_btn)
 
-        close_btn = Button(text="Закрыть", font_size="16sp")
+        close_btn = Button(text="Close", font_size="16sp")
         content.add_widget(close_btn)
 
         self.shop_popup = Popup(
-            title="Магазин",
+            title="Shop",
             content=content,
             size_hint=(0.85, 0.7)
         )
@@ -107,35 +107,35 @@ class Game(Screen):
             app.double_click_price *= 2
 
             self.shop_label.text = (
-                f"Куплено!\nКлики: {app.click_currency}\n"
-                f"Постоянный множитель: x{app.click_multiplier}"
+                f"Purchased!\nClicks: {app.click_currency}\n"
+                f"Permanent multiplier: x{app.click_multiplier}"
             )
-            self.buy_btn.text = f"2x КЛИК (навсегда) — {app.double_click_price} кликов"
+            self.buy_btn.text = f"2x CLICK (permanent) — {app.double_click_price} clicks"
         else:
             self.shop_label.text = (
-                f"Недостаточно кликов!\nНужно {app.double_click_price}, у вас {app.click_currency}"
+                f"Not enough clicks!\nNeed {app.double_click_price}, you have {app.click_currency}"
             )
 
     def buy_potion(self, multiplier, duration, price_attr):
         price = getattr(app, price_attr)
 
         if app.click_currency < price:
-            self.shop_label.text = f"Недостаточно кликов!\nНужно {price}, у вас {app.click_currency}"
+            self.shop_label.text = f"Not enough clicks!\nNeed {price}, you have {app.click_currency}"
             return
 
         app.click_currency -= price
         setattr(app, price_attr, price * 2)
 
         if price_attr == "potion_2x_price":
-            self.potion_2x_btn.text = f"Зелье 2x на 60 сек — {app.potion_2x_price} кликов"
+            self.potion_2x_btn.text = f"2x Potion for 60 sec — {app.potion_2x_price} clicks"
         elif price_attr == "potion_4x_price":
-            self.potion_4x_btn.text = f"Зелье 4x на 30 сек — {app.potion_4x_price} кликов"
+            self.potion_4x_btn.text = f"4x Potion for 30 sec — {app.potion_4x_price} clicks"
         elif price_attr == "potion_8x_price":
-            self.potion_8x_btn.text = f"Зелье 8x на 15 сек — {app.potion_8x_price} кликов"
+            self.potion_8x_btn.text = f"8x Potion for 15 sec — {app.potion_8x_price} clicks"
 
         self.activate_temp_buff(multiplier, duration)
         self.shop_label.text = (
-            f"Зелье активно!\nВременный множитель: x{multiplier}\nОсталось: {duration} сек"
+            f"Potion active!\nTemporary multiplier: x{multiplier}\nRemaining: {duration} sec"
         )
 
     def activate_temp_buff(self, multiplier, duration):
@@ -164,7 +164,7 @@ class Game(Screen):
             return
 
         if self.buff_label:
-            self.buff_label.text = f"Зелье: x{app.temp_multiplier} ({int(seconds_left)} сек)"
+            self.buff_label.text = f"Potion: x{app.temp_multiplier} ({int(seconds_left)} sec)"
 
         if seconds_left > 0 and app.temp_buff_active:
             Clock.schedule_once(lambda dt: self.update_buff_label(seconds_left - 1, token), 1)
@@ -257,7 +257,8 @@ class MediumApp(App):
     potion_4x_price = NumericProperty(100)
     potion_8x_price = NumericProperty(200)
 
-
+    # === Все типы блоков ===
+    # Новые блоки: iron, diamond, emerald, obsidian, bedrock
     BLOCKS = {
         "dirt": {
             "source": "assets/dirt.png",
@@ -297,7 +298,8 @@ class MediumApp(App):
         },
     }
 
-
+    # === Прогрессия уровней ===
+    # Уровни продолжаются новыми блоками после gold
     LEVELS = [
         ["dirt", "dirt", "wood"],
         ["dirt", "wood", "wood"],
