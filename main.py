@@ -1,3 +1,6 @@
+import json
+import os
+
 from kivy.app import App
 from kivy.properties import NumericProperty
 from kivy.uix.screenmanager import ScreenManager, Screen
@@ -111,6 +114,7 @@ class Game(Screen):
                 f"Permanent multiplier: x{app.click_multiplier}"
             )
             self.buy_btn.text = f"2x CLICK (permanent) — {app.double_click_price} clicks"
+            app.save_progress()
         else:
             self.shop_label.text = (
                 f"Not enough clicks!\nNeed {app.double_click_price}, you have {app.click_currency}"
@@ -137,6 +141,7 @@ class Game(Screen):
         self.shop_label.text = (
             f"Potion active!\nTemporary multiplier: x{multiplier}\nRemaining: {duration} sec"
         )
+        app.save_progress()
 
     def activate_temp_buff(self, multiplier, duration):
         if app.temp_buff_event:
@@ -227,6 +232,8 @@ class Block(Image):
         else:
             self.new_block()
 
+        app.save_progress()
+
     def on_touch_down(self, touch):
         if not self.collide_point(*touch.pos) or self.is_dead:
             return
@@ -257,66 +264,78 @@ class MediumApp(App):
     potion_4x_price = NumericProperty(100)
     potion_8x_price = NumericProperty(200)
 
-    # === Все типы блоков ===
-    # Новые блоки: iron, diamond, emerald, obsidian, bedrock
+ 
     BLOCKS = {
-        "dirt": {
-            "source": "assets/dirt.png",
-            "hp": 10
-        },
-        "wood": {
-            "source": "assets/wood.png",
-            "hp": 20
-        },
-        "stone": {
-            "source": "assets/stone.png",
-            "hp": 35
-        },
-        "iron": {
-            "source": "assets/iron.png",
-            "hp": 50
-        },
-        "gold": {
-            "source": "assets/gold.png",
-            "hp": 60
-        },
-        "diamond": {
-            "source": "assets/diamond.png",
-            "hp": 90
-        },
-        "emerald": {
-            "source": "assets/emerald.png",
-            "hp": 120
-        },
-        "obsidian": {
-            "source": "assets/obsidian.png",
-            "hp": 160
-        },
-        "bedrock": {
-            "source": "assets/bedrock.png",
-            "hp": 220
-        },
+        "dirt": {"source": "assets/dirt.png", "hp": 10},
+        "sand": {"source": "assets/sand.png", "hp": 15},
+        "wood": {"source": "assets/wood.png", "hp": 20},
+        "clay": {"source": "assets/clay.png", "hp": 28},
+        "stone": {"source": "assets/stone.png", "hp": 35},
+        "coal": {"source": "assets/coal.png", "hp": 45},
+        "copper": {"source": "assets/copper.png", "hp": 60},
+        "iron": {"source": "assets/iron.png", "hp": 80},
+        "silver": {"source": "assets/silver.png", "hp": 100},
+        "gold": {"source": "assets/gold.png", "hp": 125},
+        "lapis": {"source": "assets/lapis.png", "hp": 150},
+        "redstone": {"source": "assets/redstone.png", "hp": 180},
+        "diamond": {"source": "assets/diamond.png", "hp": 220},
+        "emerald": {"source": "assets/emerald.png", "hp": 260},
+        "amethyst": {"source": "assets/amethyst.png", "hp": 310},
+        "obsidian": {"source": "assets/obsidian.png", "hp": 370},
+        "netherite": {"source": "assets/netherite.png", "hp": 440},
+        "crystal": {"source": "assets/crystal.png", "hp": 520},
+        "plasma": {"source": "assets/plasma.png", "hp": 620},
+        "bedrock": {"source": "assets/bedrock.png", "hp": 740},
+        "void": {"source": "assets/void.png", "hp": 880},
+        "corrupted": {"source": "assets/corrupted.png", "hp": 1050},
     }
 
-    # === Прогрессия уровней ===
-    # Уровни продолжаются новыми блоками после gold
     LEVELS = [
         ["dirt", "dirt", "wood"],
         ["dirt", "wood", "wood"],
-        ["wood", "stone", "stone"],
-        ["stone", "stone", "iron"],
-        ["stone", "iron", "iron"],
-        ["iron", "iron", "gold"],
-        ["gold", "gold", "gold"],
-        ["gold", "gold", "diamond"],
-        ["gold", "diamond", "diamond"],
+        ["wood", "wood", "sand"],
+        ["wood", "sand", "sand"],
+        ["sand", "sand", "clay"],
+        ["sand", "clay", "clay"],
+        ["clay", "clay", "stone"],
+        ["clay", "stone", "stone"],
+        ["stone", "stone", "coal"],
+        ["stone", "coal", "coal"],
+        ["coal", "coal", "copper"],
+        ["coal", "copper", "copper"],
+        ["copper", "copper", "iron"],
+        ["copper", "iron", "iron"],
+        ["iron", "iron", "silver"],
+        ["iron", "silver", "silver"],
+        ["silver", "silver", "gold"],
+        ["silver", "gold", "gold"],
+        ["gold", "gold", "lapis"],
+        ["gold", "lapis", "lapis"],
+        ["lapis", "lapis", "redstone"],
+        ["lapis", "redstone", "redstone"],
+        ["redstone", "redstone", "diamond"],
+        ["redstone", "diamond", "diamond"],
         ["diamond", "diamond", "emerald"],
         ["diamond", "emerald", "emerald"],
-        ["emerald", "emerald", "obsidian"],
-        ["emerald", "obsidian", "obsidian"],
-        ["obsidian", "obsidian", "bedrock"],
-        ["bedrock", "bedrock", "bedrock"],
+        ["emerald", "emerald", "amethyst"],
+        ["emerald", "amethyst", "amethyst"],
+        ["amethyst", "amethyst", "obsidian"],
+        ["amethyst", "obsidian", "obsidian"],
+        ["obsidian", "obsidian", "netherite"],
+        ["obsidian", "netherite", "netherite"],
+        ["netherite", "netherite", "crystal"],
+        ["netherite", "crystal", "crystal"],
+        ["crystal", "crystal", "plasma"],
+        ["crystal", "plasma", "plasma"],
+        ["plasma", "plasma", "bedrock"],
+        ["plasma", "bedrock", "bedrock"],
+        ["bedrock", "bedrock", "void"],
+        ["bedrock", "void", "void"],
+        ["void", "void", "corrupted"],
+        ["corrupted", "corrupted", "corrupted"],
     ]
+
+    SAVE_FILE = "save.json"
 
     def build(self):
         print("GAME IS RUNNING")
@@ -325,6 +344,67 @@ class MediumApp(App):
         sm.add_widget(Game(name="g"))
         sm.add_widget(Settings(name="s"))
         return sm
+
+    def on_start(self):
+
+        self.load_progress()
+
+    def on_stop(self):
+
+        self.save_progress()
+
+    def on_pause(self):
+
+        self.save_progress()
+        return True 
+
+    def save_progress(self, *args):
+        game_screen = self.root.get_screen("g")
+
+        data = {
+            "click_currency": self.click_currency,
+            "click_multiplier": self.click_multiplier,
+            "double_click_price": self.double_click_price,
+            "potion_2x_price": self.potion_2x_price,
+            "potion_4x_price": self.potion_4x_price,
+            "potion_8x_price": self.potion_8x_price,
+            "level": self.LEVEL,
+            "score": game_screen.score,
+            "block_index": game_screen.ids.block.block_index,
+        }
+
+        try:
+            with open(self.SAVE_FILE, "w", encoding="utf-8") as f:
+                json.dump(data, f, ensure_ascii=False, indent=2)
+            print("PROGRESS SAVED")
+        except OSError as e:
+            print(f"SAVE ERROR: {e}")
+
+    def load_progress(self):
+        if not os.path.exists(self.SAVE_FILE):
+            print("NO SAVE FILE FOUND")
+            return
+
+        try:
+            with open(self.SAVE_FILE, "r", encoding="utf-8") as f:
+                data = json.load(f)
+        except (OSError, json.JSONDecodeError) as e:
+            print(f"LOAD ERROR: {e}")
+            return
+
+        self.click_currency = data.get("click_currency", 0)
+        self.click_multiplier = data.get("click_multiplier", 1)
+        self.double_click_price = data.get("double_click_price", 50)
+        self.potion_2x_price = data.get("potion_2x_price", 80)
+        self.potion_4x_price = data.get("potion_4x_price", 100)
+        self.potion_8x_price = data.get("potion_8x_price", 200)
+        self.LEVEL = data.get("level", 0)
+
+        game_screen = self.root.get_screen("g")
+        game_screen.score = data.get("score", 0)
+        game_screen.ids.block.block_index = data.get("block_index", 0)
+
+        print("PROGRESS LOADED")
 
 
 app = MediumApp()
