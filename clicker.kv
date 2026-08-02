@@ -1,91 +1,221 @@
 #:import from_hex kivy.utils.get_color_from_hex
-#:import colormap kivy.utils.colormap
 
-#:set main_color "#d1d1d1"
-#:set main_color_dark "#350657"
-#:set bg_color "#ff00ff"
+# ==== Палитра ====
+#:set bg_color        "#12151d"   # основной тёмный фон
+#:set card_color      "#1e2330"   # карточки/контейнеры
+#:set accent_color    "#f2a541"   # янтарный акцент (кнопки)
+#:set accent_dark     "#c17a1a"   # акцент в состоянии нажатия
+#:set danger_color    "#e0574f"   # для EXIT
+#:set danger_dark     "#a83f39"
+#:set text_color      "#f5f6fa"
+#:set muted_color     "#8b93a1"
+#:set shadow_color    "#00000055"
+
 
 <CustomButton@Button>:
     font_size: "20sp"
-    background_color: from_hex(main_color)
-    on_press:
-        self.background_color = from_hex(main_color_dark)
-    on_release:
-        self.background_color = from_hex(main_color)
+    bold: True
+    color: from_hex(text_color)
+    background_color: 0, 0, 0, 0
+    background_normal: ""
+    background_down: ""
+    canvas.before:
+        Color:
+            rgba: from_hex(accent_dark) if self.state == "down" else from_hex(accent_color)
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [16]
+
+
+<DangerButton@Button>:
+    font_size: "18sp"
+    bold: True
+    color: from_hex(text_color)
+    background_color: 0, 0, 0, 0
+    background_normal: ""
+    background_down: ""
+    canvas.before:
+        Color:
+            rgba: from_hex(danger_dark) if self.state == "down" else from_hex(danger_color)
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [16]
+
+
+<Block>:
+    size_hint: 1, 0.55
+    allow_stretch: True
+    keep_ratio: True
+    canvas.before:
+        Color:
+            rgba: from_hex(card_color)
+        RoundedRectangle:
+            pos: self.x + dp(6), self.y - dp(6)
+            size: self.size
+            radius: [24]
+        Color:
+            rgba: from_hex(shadow_color)
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [24]
+
 
 <Menu>:
+    canvas.before:
+        Color:
+            rgba: from_hex(bg_color)
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
     BoxLayout:
         orientation: "vertical"
-        padding: "20dp"
-        spacing: "20dp"
+        padding: "32dp"
+        spacing: "18dp"
 
+        Widget:
+            size_hint: 1, 0.15
+
+        Label:
+            text: "БЛОКОКЛИКЕР"
+            font_size: "36sp"
+            bold: True
+            color: from_hex(accent_color)
+            size_hint: 1, 0.2
+
+        Widget:
+            size_hint: 1, 0.1
+
+        CustomButton:
+            text: "ИГРАТЬ"
+            size_hint: 1, 0.15
+            on_press: root.go_game()
+
+        CustomButton:
+            text: "НАСТРОЙКИ"
+            size_hint: 1, 0.15
+            on_press: root.go_settings()
+
+        DangerButton:
+            text: "ВЫХОД"
+            size_hint: 1, 0.15
+            on_press: root.go_exit()
+
+        Widget:
+            size_hint: 1, 0.2
+
+
+<Game>:
+    FloatLayout:
         canvas.before:
             Color:
                 rgba: from_hex(bg_color)
-
             Rectangle:
                 pos: self.pos
                 size: self.size
 
-        Label:
-            text: "MENU"
-            font_size: "40sp"
-            size_hint: 1, 0.2
-
-        CustomButton:
-            text: "PLAY"
-            on_press: root.go_game()
-
-        CustomButton:
-            text: "SETTINGS"
-            on_press: root.go_settings()
-
-        CustomButton:
-            text: "EXIT"
-            on_press: root.go_exit()
-
-<Game>:
-    FloatLayout:
-
         BoxLayout:
             orientation: "vertical"
             padding: "20dp"
-            spacing: "20dp"
+            spacing: "16dp"
             size_hint: 1, 1
             pos: 0, 0
 
-            canvas.before:
-                Color:
-                    rgba: from_hex(bg_color)
+            BoxLayout:
+                orientation: "horizontal"
+                size_hint: 1, 0.12
+                canvas.before:
+                    Color:
+                        rgba: from_hex(card_color)
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [18]
+                padding: "16dp", "8dp"
 
-                Rectangle:
-                    pos: self.pos
-                    size: self.size
+                Label:
+                    text: "Очки: " + str(root.score)
+                    font_size: "18sp"
+                    bold: True
+                    color: from_hex(text_color)
 
-            Label:
-                text: "Очки: " + str(root.score) + "   Клики: " + str(app.click_currency)
-                font_size: "22sp"
-                size_hint: 1, 0.15
+                Label:
+                    text: "Клики: " + str(app.click_currency)
+                    font_size: "18sp"
+                    bold: True
+                    color: from_hex(accent_color)
 
             Label:
                 id: buff_label
                 text: ""
-                font_size: "18sp"
-                color: 1, 0.8, 0, 1
-                size_hint: 1, 0.1
+                font_size: "16sp"
+                bold: True
+                color: from_hex(accent_color)
+                size_hint: 1, 0.08
 
             Block:
                 id: block
 
             CustomButton:
-                text: "MENU"
+                text: "МЕНЮ"
+                size_hint: 1, 0.12
                 on_press: root.go_menu()
 
         CustomButton:
             text: "МАГАЗИН"
             size_hint: None, None
-            size: "130dp", "50dp"
-            pos_hint: {"right": 0.98, "top": 0.98}
+            size: "64dp", "64dp"
+            pos_hint: {"right": 0.95, "top": 0.97}
+            font_size: "13sp"
             on_press: root.open_shop()
+            canvas.before:
+                Color:
+                    rgba: from_hex(accent_dark) if self.state == "down" else from_hex(accent_color)
+                Ellipse:
+                    pos: self.pos
+                    size: self.size
+
 
 <Settings>:
+    canvas.before:
+        Color:
+            rgba: from_hex(bg_color)
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    BoxLayout:
+        orientation: "vertical"
+        padding: "32dp"
+        spacing: "18dp"
+
+        Widget:
+            size_hint: 1, 0.2
+
+        Label:
+            text: "НАСТРОЙКИ"
+            font_size: "30sp"
+            bold: True
+            color: from_hex(accent_color)
+            size_hint: 1, 0.2
+
+        Label:
+            text: "Пока здесь пусто —\nраздел в разработке"
+            font_size: "16sp"
+            color: from_hex(muted_color)
+            halign: "center"
+            size_hint: 1, 0.3
+
+        Widget:
+            size_hint: 1, 0.15
+
+        CustomButton:
+            text: "НАЗАД"
+            size_hint: 1, 0.15
+            on_press: root.go_menu()
+
+        Widget:
+            size_hint: 1, 0.
