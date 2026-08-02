@@ -159,7 +159,7 @@ class Game(Screen):
             self.buff_label.text = ""
 
     def update_buff_label(self, seconds_left, token):
-    
+
         if token != self.buff_token:
             return
 
@@ -257,6 +257,7 @@ class MediumApp(App):
     potion_4x_price = NumericProperty(100)
     potion_8x_price = NumericProperty(200)
 
+
     BLOCKS = {
         "dirt": {
             "source": "assets/dirt.png",
@@ -270,18 +271,49 @@ class MediumApp(App):
             "source": "assets/stone.png",
             "hp": 35
         },
+        "iron": {
+            "source": "assets/iron.png",
+            "hp": 50
+        },
         "gold": {
             "source": "assets/gold.png",
             "hp": 60
         },
+        "diamond": {
+            "source": "assets/diamond.png",
+            "hp": 90
+        },
+        "emerald": {
+            "source": "assets/emerald.png",
+            "hp": 120
+        },
+        "obsidian": {
+            "source": "assets/obsidian.png",
+            "hp": 160
+        },
+        "bedrock": {
+            "source": "assets/bedrock.png",
+            "hp": 220
+        },
     }
+
 
     LEVELS = [
         ["dirt", "dirt", "wood"],
         ["dirt", "wood", "wood"],
         ["wood", "stone", "stone"],
-        ["stone", "stone", "gold"],
+        ["stone", "stone", "iron"],
+        ["stone", "iron", "iron"],
+        ["iron", "iron", "gold"],
         ["gold", "gold", "gold"],
+        ["gold", "gold", "diamond"],
+        ["gold", "diamond", "diamond"],
+        ["diamond", "diamond", "emerald"],
+        ["diamond", "emerald", "emerald"],
+        ["emerald", "emerald", "obsidian"],
+        ["emerald", "obsidian", "obsidian"],
+        ["obsidian", "obsidian", "bedrock"],
+        ["bedrock", "bedrock", "bedrock"],
     ]
 
     def build(self):
